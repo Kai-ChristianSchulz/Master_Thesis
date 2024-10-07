@@ -1,0 +1,1 @@
+This repository contains all R-files from my master thesis "Das raue fraktionale stochastische Volatilitätsmodell (RFSV-Modell) und schwach konsistente Schätzung des Hurst- und Diffusionsparameters" ("The Rough Fractional Stochastic Volatility (RFSV) model and Weakly Consistent Estimation of the Hurst and Diffusion Parameters"). 
