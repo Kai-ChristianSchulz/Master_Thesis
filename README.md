@@ -1,1 +1,3 @@
 This repository contains all R-files and generated images from my master thesis "Das raue fraktionale stochastische Volatilitätsmodell (RFSV-Modell) und schwach konsistente Schätzung des Hurst- und Diffusionsparameters" ("The Rough Fractional Stochastic Volatility (RFSV) model and Weakly Consistent Estimation of the Hurst and Diffusion Parameters"). 
+
+Note that images are saved as ".eps-files" which cannot be displayed on GitHub. Those files can either be converted into readable files (like pdf) via online tools or directly included in applications that support .eps files (like LaTeX / Overleaf).
