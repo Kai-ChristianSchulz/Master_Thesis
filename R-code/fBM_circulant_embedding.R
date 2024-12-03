@@ -15,8 +15,8 @@
 ################################################################################
 
 # Chosen parameters
-N = 720000
-H = 0.5
+N = 500000
+H = 0.129
 
 # 0) Autocovarinace function for Gaussian noise
 gam_tilde = function(tau,H){
