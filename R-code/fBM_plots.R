@@ -1,6 +1,12 @@
-# Plotting fBM for H = 0.2 and H = 0.8
+# fBM_plots.R
 
-library(fractionalBM)
+################################################################################
+# Plotting fBM for H = 0.2 and H = 0.8
+################################################################################
+
+# library(devtools)
+# install_github("732jhy/fractionalBM")
+library(fractionalBM) # Package for fBM simulation
 
 set.seed(1999)
 B_0.2 = c(0,FBM(1000,0.2,1000))
@@ -17,4 +23,5 @@ par(cex.lab = 1.5, cex.axis = 1.2, cex.main = 1.8)
 plot(B_0.8, type="l", xlab="t", ylab="", main = "H = 0.8")
 text(-190,mean(B_0.8), expression(B[t]^H), xpd = TRUE, cex = 1.5) # Manually add y-axis labeling
 dev.off()
+
 
