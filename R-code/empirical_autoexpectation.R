@@ -1,10 +1,17 @@
-# Estimating log [ E( sigma_t *sigma_(t+Delta) ) ] as a function of Delta^(2H)
-# for indices SPX, DAX, NASDAQ, Nikkei225
+# empirical_autoexpectation.R
 
+################################################################################
+# Empirically estimating autoexpectation E( sigma_t *sigma_(t+Delta) ) and then
+# plotting  [ E( sigma_t *sigma_(t+Delta) ) ] as a function of Delta^(2H)
+# for indices SPX, GDAXI, IXIC, N225. Also adding a linear regression to plots
+################################################################################
+
+
+# Initializing #################################################################
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 indices = c(".SPX",".GDAXI",".IXIC", ".N225")
 
-H = c(0.129,0.098,0.126,0.119)
+H = c(0.129,0.098,0.126,0.119) # H estimates for SPX, GDAXI, IXIC, N225
 names(H) = indices
 
 vol = vector(mode="list", length = length(indices))
@@ -17,11 +24,13 @@ for (index in indices){
   vol[[index]] = data
 }
 
+# Container for empirical autoexpectation
 Delta = 1:50
 AutoE = matrix(nrow=length(Delta), ncol=length(indices))
 colnames(AutoE) = indices 
 
 
+# Calculating empirical autoexpectation ########################################
 for (index in indices){
   n = length(vol[[index]])
   for (del in Delta){
@@ -29,8 +38,10 @@ for (index in indices){
   }
 }
 
-
-# Plotting 
+################################################################################
+# Plotting log(empirical auto expecation) as a function of delta^2H and doing 
+# a linear regression 
+################################################################################
 mains = c("SPX, H = 0.129 ","GDAXI, H = 0.098","IXIC, H = 0.126", "N225, H = 0.119")
 names(mains) = indices
 file_names = c("SPX","GDAXI","IXIC","N225")
