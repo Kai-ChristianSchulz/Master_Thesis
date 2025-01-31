@@ -1,5 +1,13 @@
-# We do the exact same analysis for the SPX as in "2.1 Estimating Smoothness.R"
-# Now we use the other variation estimates provided in the OM dataset
+# smoothness_all_variances.R
+
+################################################################################
+# We re-create the log-log plots of m(q.Delta) vs Delta from "smoothness.R" for 
+# SPX. In contrast to before, we will not only be using 5 minute realized 
+# volatility as our volatility proxy of choice, but repeat for all available
+# volatility estimates for SPX in the OM data set.
+################################################################################
+
+# Initializing #################################################################
 
 m = function(q, delta, data) {
   sp = 1 # Starting Position
@@ -16,9 +24,9 @@ m = function(q, delta, data) {
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 SPX = OM[OM$Symbol==".SPX",]
 
-################################################################################
 
-# Realized Variance
+# Realized Variance ############################################################
+
 # 5-Minute 
 RV5_SPX = sqrt( SPX$rv5[! SPX$rv5 %in% 0] ) 
 # Sub Sampled
@@ -28,7 +36,9 @@ RV10_SPX = sqrt( SPX$rv10[! SPX$rv10 %in% 0] )
 # Sub Sampled
 RV10SS_SPX = sqrt( SPX$rv10_ss[! SPX$rv10_ss %in% 0] ) 
 
-# Realized Kernel Variance
+
+# Realized Kernel Variance #####################################################
+
 #Two-Scale / Bartlett Kernel
 RK_twoscale_SPX = sqrt( SPX$rk_twoscale[! SPX$rk_twoscale %in% 0] ) 
 # Tukey-Hanning(2) Kernel
@@ -56,6 +66,7 @@ q = c(0.5,1,1.5,2,3)
 delta = seq(1:50)
 output = list()
 
+# Calculating m(q,Delta) for each index
 for(k in 1:length(vol_SPX)){
   dummy = matrix(nrow = length(q), ncol = length(delta))
   for (i in 1:length(q)) {
@@ -65,7 +76,16 @@ for(k in 1:length(vol_SPX)){
   output = append(output,list(dummy))
 }
 
+# Container for H, nu and y-intersec estimates
+H = numeric(length(vol_SPX))
+intersec = numeric(length(vol_SPX))
+nu = numeric(length(vol_SPX))
+
+
+# Creating plots and calculating estimates
 for(i in 1:length(vol_SPX)){
+  
+  # Creating log-log plot of m(q,Delta) vs Delta and adding linear regression
   postscript(file = paste0("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Bilder\\Smoothness_SPX_",names(vol_SPX)[i],".eps"), width = 6, height = 6, paper = "special", horizontal = FALSE)
   par(cex.lab = 1.3 , cex.axis = 1.2, cex.main = 1.5, mar = c(5, 5, 4, 2) + 0.1)
   plot(log(delta),log(output[[i]][1,]), col="red", type="p", pch=16, xlim=c(0,4), 
@@ -83,4 +103,19 @@ for(i in 1:length(vol_SPX)){
   legend("bottomright", col = c("red","blue","green","yellow2","deeppink"),
          pch=16, legend=c("q=0.5","q=1","q=1.5","q=2","q=3"))
   dev.off()
+  
+  # Estimating H and y-intersec
+  xi = vector()
+  for (k in 1:length(q))
+    xi = append(xi,lm(log(output[[i]][k,])  ~ log(delta))$coefficients[2] )
+  H[i] = lm(xi ~ q)$coefficients[2]
+  intersec[i] = lm(xi ~ q)$coefficients[1]
+  
+  # Estimating nu
+  nu[i] = sd( diff(log(vol_SPX[[i]])))
 }
+
+# Display rounded estimates
+round(H, digits = 3)
+round(nu, digits = 3)
+round(intersec, digits =3)
