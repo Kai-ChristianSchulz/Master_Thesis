@@ -1,9 +1,12 @@
+# autocovariance_log-log-plot.R
+
+################################################################################
 # Creating the log-log Plots of the auto covariance function of
 # 1) log (sigma)
 # 2) sigma
+################################################################################
 
-# Initializing
-
+# Initializing #################################################################
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 indices = c(".SPX",".GDAXI",".IXIC", ".N225")
 
@@ -39,7 +42,8 @@ for (index in indices){
                                plot=FALSE)$acf[2:(Delta_max+1),1,1]
 }
 
-# Creating the log log plots
+
+# Creating the log log plots ###################################################
 
 # For Autocov_Vol
 mains = c("SPX","GDAXI","IXIC","N225")
