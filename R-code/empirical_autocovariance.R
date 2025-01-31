@@ -1,6 +1,11 @@
-# Estimating empirical Autokovariance for Indices S&P 500, DAX, NASDAQ, Nikkei 
-# as a function of \Delta ^2H 
+# empirical_autocovariance.R
 
+################################################################################
+# Estimating empirical autokovariance for indices SPX, GDAXI, IXIC, N225 
+# as a function of delta^2H 
+################################################################################
+
+# Initializing #################################################################
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 indices = c(".SPX",".GDAXI",".IXIC", ".N225")
 
@@ -18,19 +23,22 @@ for (index in indices){
 }
 
 
-Delta_max = 50# Maximum lag size
+Delta_max = 50 # Maximum lag size
+
 # Matrix that stores in each column the indices and in each row the related
 # covariance for each lag
 Cov = matrix(nrow=Delta_max, ncol=length(indices))
 colnames(Cov) = indices
 
-# Calculating Autocovariance for each index and all lags
+
+# Calculating Autocovariance for each index and all lags #######################
 for (index in indices){
     Cov[,index] = acf(log_vol[[index]], type="covariance", lag.max = Delta_max, 
                       plot=FALSE)$acf[2:(Delta_max+1),1,1]
 }
 
-# Plotting Cov as a function of Delta^2H and adding linear regression
+
+# Plotting Cov as a function of Delta^2H and adding linear regression ##########
 mains = c("SPX, H = 0.129 ","GDAXI, H = 0.098","IXIC, H = 0.126", "N225, H = 0.119")
 names(mains) = indices
 file_names = c("SPX","GDAXI","IXIC","N225")
