@@ -1,7 +1,11 @@
-# 2.1 Estimating Smoothness various Indices
+# smoothness_all_indices.R
 
-# Estimating smoothnes parameters for all indices in Oxford-Man data set,
-# according to R-Program "2.1 Estimating Smoothness.R"
+################################################################################
+# We estimate the smoothness parameter H as the slope of the linear regression
+# a_q vs q from "smoothness.R". We do this for all indices in the OM data set
+################################################################################
+
+# Initializing
 
 m = function(q, delta, data) {
   sp = 1 # Starting Position
@@ -27,6 +31,7 @@ names(intersec) = indices
 q = c(0.5,1,1.5,2,3)
 delta = seq(1:50)
 
+# Calculating H for all indices
 for(index in indices) {
   data = sqrt ( OM[OM$Symbol==index,]$rv5 )
   data = data[! data %in% 0] # Removing 0 entries, because log(0) = infty
@@ -42,6 +47,7 @@ for(index in indices) {
   intersec[index] = lm(xi ~ q)$coefficients[1]
 }
 
+# Saving as table
 H_estimates = round(cbind(intersec, H), digits=3)
 write.table(H_estimates,"D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\R-Programme\\H estimates.dat", 
             sep=" & ")
