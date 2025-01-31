@@ -1,20 +1,29 @@
-# For plotNormalDensity()
+# distribution_increments-density_fits.R
+
+################################################################################
+# Estimating the distribution of the increments of the log-realized volatility
+# for various by firstly a kernel density fit and secondly a normal denisty fit.
+# Furthermore adding the re-scaled normal density fit for lag delta = 1 to 
+# all graphs. 
+# At the end of the programm we also apply several normality tests.
+################################################################################
+
+
+# For plotNormalDensity(), visual representation for normal density fit
 library(rcompanion)
 
-# Reading Oxford-Man data set and extracting entries for selected indices
+# Initializing #################################################################
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 SPX = OM[OM$Symbol==".SPX",]
 DAX = OM[OM$Symbol==".GDAXI",]
 NASDAQ = OM[OM$Symbol==".IXIC",]
 N225 = OM[OM$Symbol==".N225",]
 
-# Calculating realized Volatility and omnitting 0 entries
 vol_SPX = sqrt( SPX$rv5[! SPX$rv5 %in% 0] )
 vol_DAX = sqrt( DAX$rv5[! DAX$rv5 %in% 0] )
 vol_NASDAQ = sqrt( NASDAQ$rv5[! NASDAQ$rv5 %in% 0] )
 vol_N225 = sqrt( N225$rv5[! N225$rv5 %in% 0] )
 
-# List with the volatilitity data for selected indices
 indices = c("SPX","DAX","NASDAQ","N225")
 vol = list(vol_SPX, vol_DAX, vol_NASDAQ, vol_N225)
 names(vol) = indices
@@ -27,9 +36,9 @@ increments_NASDAQ = vector(mode = "list", length= length(delta))
 increments_N225 = vector(mode = "list", length= length(delta))
 
 
-# Calculating the increments for various lags
+# Calculating the increments for various lags ##################################
 
-#SPX
+### SPX ###
 for( i in 1:length(delta)) {
   del = delta[i]
   sigma_2 = vol_SPX[seq(del+1,length(vol_SPX), by=1)]
@@ -37,7 +46,7 @@ for( i in 1:length(delta)) {
   increments_SPX[[i]] = log(sigma_2) - log(sigma_1) 
 }
 
-#DAX
+### DAX ###
 for( i in 1:length(delta)) {
   del = delta[i]
   sigma_2 = vol_DAX[seq(del+1,length(vol_DAX), by=1)]
@@ -45,7 +54,7 @@ for( i in 1:length(delta)) {
   increments_DAX[[i]] = log(sigma_2) - log(sigma_1) 
 }
 
-#NASDAQ
+### IXIC ###
 for( i in 1:length(delta)) {
   del = delta[i]
   sigma_2 = vol_NASDAQ[seq(del+1,length(vol_NASDAQ), by=1)]
@@ -53,7 +62,7 @@ for( i in 1:length(delta)) {
   increments_NASDAQ[[i]] = log(sigma_2) - log(sigma_1)
 }
 
-#N225
+### N225 ###
 for( i in 1:length(delta)) {
   del = delta[i]
   sigma_2 = vol_N225[seq(del+1,length(vol_N225), by=1)]
@@ -61,15 +70,16 @@ for( i in 1:length(delta)) {
   increments_N225[[i]] = log(sigma_2) - log(sigma_1)
 }
 
-
+################################################################################
 # Plotting the estimated density for each index for various lags
 # Then adding the estimated normal density (solid line) and the re-scaled
-# normal density fit (dashed line) for delta = 1
+# normal density fit (dashed line) of lag delta = 1.
+################################################################################
 
 col = c("red","blue","green","yellow2")
 xre = seq(-4,4,by=0.01)
 
-# SPX 
+# SPX ##########################################################################
 
 H_SPX = 0.129 # Estimated H-value for SPX
 
@@ -86,7 +96,7 @@ for(i in 1:length(delta)){
   dev.off()
 }
 
-# DAX
+# GDAXI ########################################################################
 
 H_DAX = 0.098
 
@@ -101,7 +111,7 @@ for(i in 1:length(delta)){
   dev.off()
 }
 
-# NASDAQ
+# IXIC #########################################################################
 
 H_NASDAQ = 0.126
 
@@ -116,7 +126,7 @@ for(i in 1:length(delta)){
   dev.off()
 }
 
-# N225
+# N225 #########################################################################
 
 H_N225 = 0.119
 
@@ -131,33 +141,30 @@ for(i in 1:length(delta)){
   dev.off()
 }
 
-
 # Calculating Standard Deviation of increments for Delta = 1
-
 sd(increments_SPX[[1]])
 sd(increments_DAX[[1]])
 sd(increments_NASDAQ[[1]])
 sd(increments_N225[[1]])
 
 # Calculating Mean of increments for Delta = 1
-
 mean(increments_SPX[[1]])
 mean(increments_DAX[[1]])
 mean(increments_NASDAQ[[1]])
 mean(increments_N225[[1]])
 
 
-###############################################################################
-# Testing for Normality  
-###############################################################################
 
+###############################################################################
+# Testing for Normality:  
 # We test the increments for normality using the Shapiro-Wilk, Anderson-Darling
 # and Jarque-Bera Test
+###############################################################################
 
 library(nortest) # for Anderson-Darling Test
 library(tseries) # for Jarque-Bera Test
 
-# SPX
+# SPX ##########################################################################
 test_SPX = matrix(nrow=length(delta), ncol = 3)
 for (i in 1:length(delta)){
   test_SPX[i,1] = shapiro.test(increments_SPX[[i]][1:5000])$p.value
@@ -166,7 +173,7 @@ for (i in 1:length(delta)){
 }
 test_SPX
 
-# DAX
+# GDAXI ########################################################################
 test_DAX = matrix(nrow=length(delta), ncol = 3)
 for (i in 1:length(delta)){
   test_DAX[i,1] = shapiro.test(increments_DAX[[i]][1:5000])$p.value
@@ -175,7 +182,7 @@ for (i in 1:length(delta)){
 }
 test_DAX
 
-# NASDAQ
+# IXIC #########################################################################
 test_NASDAQ = matrix(nrow=length(delta), ncol = 3)
 for (i in 1:length(delta)){
   test_NASDAQ[i,1] = shapiro.test(increments_NASDAQ[[i]][1:5000])$p.value
@@ -184,7 +191,7 @@ for (i in 1:length(delta)){
 }
 test_NASDAQ
 
-# N225
+# N225 #########################################################################
 test_N225 = matrix(nrow=length(delta), ncol = 3)
 for (i in 1:length(delta)){
   test_N225[i,1] = shapiro.test(increments_N225[[i]][1:5000])$p.value
