@@ -1,12 +1,24 @@
-library("hypergeo")
-# Kumemrs Function M(a,b;z) = genhypergeo(a,b,z)
+# MSD_RFSV-FSV.R
+
+################################################################################
+# The MSD (mean square displacement) under the RFSV/FSV-model can be calculated
+# using Kummers function. We investigate the MSD as a function of the time lag
+# Delta between observations and study the effects of different model 
+# parameters on the MSD. Lastly, we plot the empirical MSD for SPX and compare
+# it to the MSD graphs under the RFSV and FSV model respectively.
+################################################################################
+
+
+# Initializing #################################################################
+
+library("hypergeo") # Kumemrs Function M(a,b;z) = genhypergeo(a,b,z)
 
 # Kummers Function
 M = function(a,b,z){
   Re(genhypergeo(a,b,z))
 }
 
-# Mean squared displacement for stationary fOU
+# Mean squared displacement formula for stationary fOU
 MSD = function(nu,H,th,D){
   x = nu^2/(th^(2*H)) * gamma(2*H+1) *(1-cosh(th*D)) + nu^2 * D^(2*H)
   y = nu^2 * th * D^(2*H+1) /(2*(2*H+1) ) 
@@ -14,8 +26,10 @@ MSD = function(nu,H,th,D){
   return(x-y*z)
 }
 
-
+################################################################################
 # Effect of varying theta
+################################################################################
+
 nu =0.343
 H = 0.5
 Delta = 1:20
@@ -36,7 +50,11 @@ legend("topleft", col = c("black","red","blue","green","yellow2","deeppink"),
                         bquote(theta == 0.5),bquote(theta == 0.6)), cex =1.2 )
 dev.off()
 
+
+################################################################################
 # Effect of varying nu
+################################################################################
+
 th =0.5
 H = 0.5
 Delta = 1:20
@@ -57,7 +75,10 @@ legend("topleft", col = c("black","red","blue","green","yellow2","deeppink"),
                         bquote(nu == 0.5),bquote(nu == 0.6)), cex=0.9 )
 dev.off()
 
+
+################################################################################
 # Effect of varying H
+################################################################################
 th =0.01
 nu = 0.343
 Delta = 1:20
@@ -78,7 +99,12 @@ legend("topleft", col = c("black","red","blue","green","yellow2","deeppink"),
                         bquote(H == 0.5),bquote(H == 0.6)), cex =1.2 )
 dev.off()
 
-# Empirical MSD
+
+################################################################################
+# Empirical MSD of SPX in comparison to MSD under RFSV and FSV
+################################################################################
+
+# Function to calculate empirical MSD
 m = function(q, delta, data) {
   sp = 1 # Starting Position
   m = 0  # Returned estimate
@@ -91,14 +117,17 @@ m = function(q, delta, data) {
   return(m)
 }
 
+# Getting SPX data
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
 SPX = OM[OM$Symbol==".SPX",]
 RV_SPX = sqrt( SPX$rv5[! SPX$rv5 %in% 0] )
-output_SPX = vector(length= length(Delta))
+output_SPX = vector(length= length(Delta)) # Container to store empirical MSD
 
+# Calculating empirical MSD for SPX
 for (i in 1:length(Delta))
   output_SPX[i] =  m(2,Delta[i],RV_SPX)
 
+# Plotting empirical MSD and MSD under RFSV and FSV
 postscript(file = "D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Bilder\\MSD_RFSV_FSV.eps", width = 6, height = 6, paper = "special", horizontal = FALSE)
 par(cex.lab = 1.3 , cex.axis = 1.2, cex.main = 1.5, mar = c(5, 5, 4, 2) + 0.1)
 plot(log(Delta), log(output_SPX), pch=16, ylab=bquote(log(MSD)),  
