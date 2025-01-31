@@ -1,14 +1,19 @@
-# Estimating Nu for all indices
+# nu_all_indices.R
 
-# For each index we estimate Nu as the empirical standard deveation of the 
-# increments of the log-volatility process with lag Delta = 1
+################################################################################
+# We estimate nu as the standard deviation of the increments with 
+# lag Delta = 1 of the 5 minute log-realized volatility. We repeat this for 
+# all indices in the OM data set.
+################################################################################
 
+
+# Initializing #################################################################
 OM = read.csv("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Daten\\oxfordmanrealizedvolatilityindices.csv")
-
 indices = unique(OM$Symbol)
 Nu = double(length(indices))
 names(Nu) = indices
 
+# Calculating nu estimate for each index #######################################
 for (ind in indices){
   data = sqrt ( OM[OM$Symbol==ind,]$rv5 )
   data = data[! data %in% 0] 
@@ -20,5 +25,6 @@ for (ind in indices){
 
 Nu
 
+# Saving as table
 write.table(round(Nu,digits=3),"D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\R-Programme\\Nu estimates.dat", 
             sep=" & ")
