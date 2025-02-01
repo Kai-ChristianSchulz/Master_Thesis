@@ -89,7 +89,7 @@ for(i in 1:length(vol_SPX)){
   postscript(file = paste0("D:\\Aachen\\Mathe\\12.Semester\\Masterarbeit\\Bilder\\Smoothness_SPX_",names(vol_SPX)[i],".eps"), width = 6, height = 6, paper = "special", horizontal = FALSE)
   par(cex.lab = 1.3 , cex.axis = 1.2, cex.main = 1.5, mar = c(5, 5, 4, 2) + 0.1)
   plot(log(delta),log(output[[i]][1,]), col="red", type="p", pch=16, xlim=c(0,4), 
-       ylim= c(-3,-0.5), ylab=expression(log(m,Delta)),
+       ylim= c(-3,-0.5), ylab=expression(log(m(q,Delta))),
        xlab=expression(log(Delta)), main=names(vol_SPX)[i])
   abline(lm(log(output[[i]][1,])  ~ log(delta)), col="red")
   points(log(delta),log(output[[i]][2,]), col="blue", pch=16)
